@@ -1,0 +1,17 @@
+#! /bin/sh
+
+export EINFO_COLOR="no"
+source /etc/init.d/functions.sh
+
+einfo "Started esync"
+
+esync --nospinner --nocolor > /dev/null
+
+RESULT=$?
+
+rm -f /tmp/esearchdb.py.tmp
+
+update-eix > /dev/null
+
+ebegin "Finished esync"
+eend $RESULT
