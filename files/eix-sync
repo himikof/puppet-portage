@@ -1,0 +1,13 @@
+#! /bin/sh
+
+export EINFO_COLOR="no"
+source /etc/init.d/functions.sh
+
+einfo "Started eix-sync"
+
+eix-sync > /dev/null
+
+RESULT=$?
+
+ebegin "Finished eix-sync"
+eend $RESULT

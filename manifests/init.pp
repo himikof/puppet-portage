@@ -1,7 +1,7 @@
-import 'root'
+import 'stdlib'
 import 'os_gentoo'
 
-# Class tool::portage
+# Class portage
 #
 #  Provides the core portage configuration and some common portage
 #  tools.
@@ -10,82 +10,92 @@ import 'os_gentoo'
 # @version 1.0
 # @package tool_portage
 #
-class tool::portage {
+class portage (
+  $profile              = 
+    "/usr/portage/profiles/default/linux/$::architecture/10.0",
+  $use                  = false,
+  $chost                = false,
+  $cflags               = false,
+  $accept_keywords      = false,
+  $logdir               = false,
+  $dispatch_conf_logdir = false,
+  $overlays             = [],
+  $fetch_command        = false,
+  $mirrors              = [],
+  $rsync_mirror         = false,
+  $binhost              = false,
+  $binhost_only         = false,
+  $emerge_opts          = false,
+  $make_opts            = false,
+  $features             = [],
+  $input_devices        = [],
+  $video_devices        = [],
+  $config_protect       = [],
+  $config_protect_mask  = [],
+  $linguas              = [],
+  $eclass_warning       = false,
+  $sysadmin_email       = false,
+  $mailserver           = 'localhost',
+  $mailfrom_user        = 'portage',
+  $mailfrom_fqdn        = $::fqdn,
+  $layman_storage       = false,
+  $gpg_dir              = false,
+  $gpg_key              = false,
+) {
+  
+  $unstable_keyword = "~$::architecture"
 
-  gentoo_use_flags { eselect:
-    context => 'tools_portage_common_eselect',
-    package => 'app-admin/eselect',
-    use     => 'doc bash-completion',
+#   gentoo_use_flags { 'eselect':
+#     context => 'portage_common_eselect',
+#     package => 'app-admin/eselect',
+#     use     => 'doc bash-completion',
+#     tag     => 'buildhost'
+#   }
+#   gentoo_use_flags { 'portage':
+#     context => 'portage_common_portage',
+#     package => 'sys-apps/portage',
+#     use     => 'doc',
+#     tag     => 'buildhost'
+#   }
+#   gentoo_keywords { 'esearch':
+#     context => 'portage_esearch',
+#     package => 'app-portage/esearch',
+#     keywords => $unstable_keyword,
+#     tag     => 'buildhost'
+#   }
+  gentoo_keywords { 'portage':
+    context => 'portage',
+    package => '=app-portage/portage-2.2*',
+    keywords => "**",
     tag     => 'buildhost'
   }
-  gentoo_use_flags { portage:
-    context => 'tools_portage_common_portage',
-    package => 'sys-apps/portage',
-    use     => 'doc',
-    tag     => 'buildhost'
+  gentoo_unmask { 'portage':
+    context => 'portage',
+    package => '=app-portage/portage-2.2*',
+    tag     => 'buildhost',
   }
-  gentoo_keywords { esearch:
-    context => 'tools_portage_esearch',
-    package => 'app-portage/esearch',
-    keywords => "~$keyword",
-    tag     => 'buildhost'
+  package {['eix', 'eselect', 'euses', 'gentoolkit', 'gentoolkit-dev',
+            'mirrorselect', 'portage-utils']:
+    ensure   => 'installed',
+    tag      => 'buildhost',
   }
-  package { 
-    ['euses', 'gentoolkit', 'gentoolkit-dev', 'mirrorselect',
-    'portage-utils', 'pybugz']:
-    ensure   => 'installed',
-    tag      => 'buildhost';
-    'esearch':
-    category => 'app-portage',
-    ensure   => 'installed',
-    require  => Gentoo_keywords['esearch'],
-    tag      => 'buildhost';
-    'eselect':
-    category => 'app-admin',
-    ensure   => 'installed',
-    require  => Gentoo_use_flags['eselect'],
-    tag      => 'buildhost';
-    'portage':
+#   package {'esearch':
+#     category => 'app-portage',
+#     ensure   => 'installed',
+#     require  => Gentoo_keywords['esearch'],
+#     tag      => 'buildhost',
+#   }
+#   package {'eselect':
+#     category => 'app-admin',
+#     ensure   => 'installed',
+#     require  => Gentoo_use_flags['eselect'],
+#     tag      => 'buildhost',
+#   }
+  package { 'portage':
     category => 'sys-apps',
-    ensure   => 'installed',
-    require  => Gentoo_use_flags['portage'],
-    tag      => 'buildhost';
-  }
-
-  $template_version = template_version($version_portage, '2.1.4.4@:2.1.4.4,','2.1.4.4')
-
-  $profile              = get_var('portage_profile',             '/usr/portage/profiles/default/linux/x86/10.0')
-  $use                  = get_var('portage_use',                  false)
-  $chost                = get_var('portage_chost',                'i686-pc-linux-gnu')
-  $cflags               = get_var('portage_cflags',               false)
-  $accept_keywords      = get_var('portage_accept_keywords',      false)
-  $logdir               = get_var('portage_logdir',               false)
-  $dispatch_conf_logdir = get_var('portage_dispatch_conf_logdir', false)
-  $overlays             = split(get_var('portage_overlays'), ',')
-  $fetch_command        = get_var('portage_fetch_command',        false)
-  $mirrors              = split(get_var('portage_mirrors'), ',')
-  $rsync_mirror         = get_var('portage_rsync_mirror')
-  $binhost              = get_var('portage_binhost',              false)
-  $binhost_only         = get_var('portage_binhost_only',         false)
-  $emerge_opts          = get_var('portage_emerge_opts',          false)
-  $make_opts            = get_var('portage_make_opts',            false)
-  $features             = split(get_var('portage_features'), ',')
-  $input_devices        = split(get_var('portage_input_devices'), ',')
-  $video_devices        = split(get_var('portage_video_devices'), ',')
-  $config_protect       = split(get_var('portage_config_protect'), ',')
-  $config_protect_mask  = split(get_var('portage_config_protect_mask'), ',')
-  $linguas              = split(get_var('portage_linguas'), ',')
-  $eclass_warning       = get_var('portage_ignore_eclass_warning', false)
-
-  $portage_sysadmin = get_var('kolab_admin_mail', 'root@localhost')
-  $portage_mailserver   = get_var('mailserver', 'localhost')
-  $portage_hostname     = get_var('hostname',   'localhost')
-  $portage_domainname   = get_var('domainname', 'localdomain')
-
-  if defined(Package['layman']) {
-    $layman_storage = get_var('portage_layman_storage', false)
-  } else {
-    $layman_storage = false
+    ensure   => 'latest',
+    require  => [Gentoo_keywords['portage'], Gentoo_unmask['portage']],
+    tag      => 'buildhost',
   }
 
   if $logdir {
@@ -109,60 +119,70 @@ class tool::portage {
   # Portage configuration
   file {
     '/etc/make.profile':
-    ensure  => $profile;
+      ensure  => "..$profile";
+    
     '/etc/make.conf':
-    content => template("tool_portage/make.conf_${template_version}"),
-    require => [File['/etc/portage/make.conf.puppet'], Package['portage']],
-    tag     => 'buildhost';
+      content => template("portage/make.conf"),
+      require => [File['/etc/portage/make.conf.puppet'], Package['portage']],
+      tag     => 'buildhost';
+    
     '/etc/portage/make.conf.puppet':
-    ensure => 'present',
-    require => Package['portage'],
-    tag     => 'buildhost';
+      ensure => 'present',
+      require => Package['portage'],
+      tag     => 'buildhost';
+
     '/etc/dispatch-conf.conf':
-    content => template("tool_portage/dispatch-conf.conf_${template_version}"),
-    require => Package['portage'],
-    tag     => 'buildhost';
+      content => template("portage/dispatch-conf.conf"),
+      require => Package['portage'],
+      tag     => 'buildhost';
+    
     '/etc/config-archive':
-    ensure  => 'directory',
-    tag     => 'buildhost';
+      ensure  => 'directory',
+      tag     => 'buildhost';
+    
+    '/etc/eix-sync.conf':
+      content => '*',
+      require => Package['eix'],
+      tag     => 'buildhost';
+    
     '/etc/cron.daily/eclean':
-    source  => 'puppet:///tool_portage/eclean',
-    mode    => 755;
-    '/etc/cron.daily/esync':
-    source  => 'puppet:///tool_portage/esync',
-    mode    => 755;
+      source  => 'puppet:///modules/portage/eclean',
+      mode    => 755;
+    
+    '/etc/cron.daily/eix-sync':
+      source  => 'puppet:///modules/portage/eix-sync',
+      mode    => 755;
+    
     '/etc/cron.daily/glsa-check':
-    content => template("tool_portage/glsa-check"),
-    mode    => 755;
+      content => template("portage/glsa-check"),
+      mode    => 755;
+    
     '/etc/logrotate.d/portage':
-    source  => 'puppet:///tool_portage/logrotate.portage';
+      source  => 'puppet:///modules/portage/logrotate.portage';
+    
     '/usr/portage/distfiles':
-    ensure  => 'directory';
+      ensure  => 'directory';
   }
 
-  $portage_gpg_dir = get_var('portage_gpg_dir', false)
-
-  if $portage_gpg_dir {
-    @line {'make_conf_portage_gpg_dir':
-      file => '/etc/portage/make.conf.puppet',
+  if $gpg_dir {
+    file_line {'make_conf_portage_gpg_dir':
+      path => '/etc/portage/make.conf.puppet',
       line => "PORTAGE_GPG_DIR=\"$portage_gpg_dir\"",
       tag => 'buildhost'
     }
   }
 
-  $portage_gpg_key = get_var('portage_gpg_key', false)
-
-  if $portage_gpg_key {
-    @line {'make_conf_portage_gpg_key':
-      file => '/etc/portage/make.conf.puppet',
+  if $gpg_key {
+    file_line {'make_conf_portage_gpg_key':
+      path => '/etc/portage/make.conf.puppet',
       line => "PORTAGE_GPG_KEY=\"$portage_gpg_key\"",
       tag => 'buildhost'
     }
   }
 
   if $eclass_warning {
-    @line {'make_conf_eclass_warning':
-      file => '/etc/portage/make.conf.puppet',
+    file_line {'make_conf_eclass_warning':
+      path => '/etc/portage/make.conf.puppet',
       line => "PORTAGE_ECLASS_WARNING_ENABLE=\"0\""
     }
   }
