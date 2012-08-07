@@ -77,7 +77,7 @@ class portage (
   package {['eix', 'eselect', 'euses', 'gentoolkit', 'gentoolkit-dev',
             'mirrorselect', 'portage-utils']:
     ensure   => 'installed',
-    require  => Package['portage']
+    require  => Package['portage'],
     tag      => 'buildhost',
   }
 #   package {'esearch':
