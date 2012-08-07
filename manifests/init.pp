@@ -116,20 +116,28 @@ class portage (
       tag    => 'buildhost'
     }
   }
+  
+  exec { 'portage_changed_config':
+    command     => "/usr/bin/emerge --changed-use --deep @world",
+    refreshonly => "true",
+  }
 
   # Portage configuration
   file {
     '/etc/make.profile':
-      ensure  => "..$profile";
+      ensure  => "..$profile",
+      notify  => Exec['portage_changed_config'];
     
     '/etc/make.conf':
       content => template("portage/make.conf"),
       require => [File['/etc/portage/make.conf.puppet'], Package['portage']],
+      notify  => Exec['portage_changed_config'],
       tag     => 'buildhost';
     
     '/etc/portage/make.conf.puppet':
-      ensure => 'present',
+      ensure  => 'present',
       require => Package['portage'],
+      notify  => Exec['portage_changed_config'],
       tag     => 'buildhost';
 
     '/etc/dispatch-conf.conf':
