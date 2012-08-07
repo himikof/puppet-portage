@@ -65,13 +65,13 @@ class portage (
 #   }
   gentoo_keywords { 'portage':
     context => 'portage',
-    package => '=app-portage/portage-2.2*',
+    package => '=sys-apps/portage-2.2*',
     keywords => "**",
     tag     => 'buildhost'
   }
   gentoo_unmask { 'portage':
     context => 'portage',
-    package => '=app-portage/portage-2.2*',
+    package => '=sys-apps/portage-2.2*',
     tag     => 'buildhost',
   }
   package {['eix', 'eselect', 'euses', 'gentoolkit', 'gentoolkit-dev',
