@@ -198,3 +198,112 @@ class portage (
     }
   }
 }
+
+# Function gentoo_use_flags
+#
+#  Specify use flags for a package.
+#
+#  @param context  A unique context for the package
+#  @param package  The package atom
+#  @param use      The use flags to apply
+#
+define gentoo_use_flags ($context = $title,
+                         $package = '',
+                         $use = '')
+{
+
+  file { "/etc/portage/package.use/${context}":
+    content => "$package $use",
+    owner   => 'root',
+    group   => 'root',
+    mode    => 644,
+    require => File['package.use::directory'],
+    notify  => Exec['portage_changed_config'],
+    tag     => 'buildhost'
+  }
+
+}
+
+# Function gentoo_keywords
+#
+#  Specify keywords for a package.
+#
+#  @param context  A unique context for the package
+#  @param package  The package atom
+#  @param keywords The keywords to apply
+#
+define gentoo_keywords ($context  = $title,
+                        $package  = '',
+                        $keywords = '')
+{
+
+  file { "/etc/portage/package.accept_keywords/${context}":
+    content => "$package $keywords\n",
+    require => File['package.accept_keywords::directory'],
+    notify  => Exec['portage_changed_config'],
+    tag    => 'buildhost'
+  }
+
+}
+
+# Function gentoo_unmask
+#
+#  Unmask a package.
+#
+#  @param context  A unique context for the package
+#  @param package  The package atom
+#
+define gentoo_unmask ($context  = $title,
+                      $package  = '')
+{
+
+  file { "/etc/portage/package.unmask/${context}":
+    content => "$package\n",
+    require => File['package.unmask::directory'],
+    notify  => Exec['portage_changed_config'],
+    tag    => 'buildhost'
+  }
+
+}
+
+# Function gentoo_mask
+#
+#  Mask a package.
+#
+#  @param context  A unique context for the package
+#  @param package  The package atom
+#
+define gentoo_mask ($context  = $title,
+                    $package  = '')
+{
+
+  file { "/etc/portage/package.mask/${context}":
+    content => "$package\n",
+    require => File['package.mask::directory'],
+    notify  => Exec['portage_changed_config'],
+    tag    => 'buildhost'
+  }
+
+}
+
+# Function gentoo_license
+#
+#  Specify license for a package.
+#
+#  @param context  A unique context for the package
+#  @param package  The package atom
+#  @param license The license to apply
+#
+define gentoo_license ($context  = $title,
+                       $package  = '',
+                       $license = '')
+{
+
+  file { "/etc/portage/package.accept_license/${context}":
+    content => "$package $license\n",
+    require => File['package.accept_license::directory'],
+    notify  => Exec['portage_changed_config'],
+    tag    => 'buildhost'
+  }
+
+}
