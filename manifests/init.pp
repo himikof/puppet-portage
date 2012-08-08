@@ -126,7 +126,8 @@ class portage (
   # Portage configuration
   file {
     '/etc/make.profile':
-      ensure  => "..$profile",
+      ensure  => 'link',
+      target  => "..$profile",
       notify  => Exec['portage_changed_config'];
     
     '/etc/make.conf':
