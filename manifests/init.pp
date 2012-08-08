@@ -1,5 +1,4 @@
 import 'stdlib'
-import 'os_gentoo'
 
 # Class portage
 #
@@ -42,6 +41,11 @@ class portage (
   $gpg_dir              = false,
   $gpg_key              = false,
 ) {
+  
+  include portage::config::backup
+  include portage::config
+  include portage::config::restore
+  include portage::emerge
   
   $unstable_keyword = "~$::architecture"
 
@@ -115,12 +119,6 @@ class portage (
       ensure => 'directory',
       tag    => 'buildhost'
     }
-  }
-  
-  exec { 'portage_changed_config':
-    command     => "/usr/bin/emerge --changed-use --deep @world",
-    refreshonly => "true",
-    timeout     => 0,                   # Disable timeout completely
   }
 
   # Portage configuration
@@ -197,113 +195,4 @@ class portage (
       line => "PORTAGE_ECLASS_WARNING_ENABLE=\"0\""
     }
   }
-}
-
-# Function portage::use_flags
-#
-#  Specify use flags for a package.
-#
-#  @param context  A unique context for the package
-#  @param package  The package atom
-#  @param use      The use flags to apply
-#
-define portage::use_flags ($context = $title,
-                           $package = '',
-                           $use = '')
-{
-
-  file { "/etc/portage/package.use/${context}":
-    content => "$package $use",
-    owner   => 'root',
-    group   => 'root',
-    mode    => 644,
-    require => File['package.use::directory'],
-    notify  => Exec['portage_changed_config'],
-    tag     => 'buildhost'
-  }
-
-}
-
-# Function portage::keywords
-#
-#  Specify keywords for a package.
-#
-#  @param context  A unique context for the package
-#  @param package  The package atom
-#  @param keywords The keywords to apply
-#
-define portage::keywords ($context  = $title,
-                          $package  = '',
-                          $keywords = '')
-{
-
-  file { "/etc/portage/package.accept_keywords/${context}":
-    content => "$package $keywords\n",
-    require => File['package.accept_keywords::directory'],
-    notify  => Exec['portage_changed_config'],
-    tag    => 'buildhost'
-  }
-
-}
-
-# Function portage::unmask
-#
-#  Unmask a package.
-#
-#  @param context  A unique context for the package
-#  @param package  The package atom
-#
-define portage::unmask ($context  = $title,
-                        $package  = '')
-{
-
-  file { "/etc/portage/package.unmask/${context}":
-    content => "$package\n",
-    require => File['package.unmask::directory'],
-    notify  => Exec['portage_changed_config'],
-    tag    => 'buildhost'
-  }
-
-}
-
-# Function portage::mask
-#
-#  Mask a package.
-#
-#  @param context  A unique context for the package
-#  @param package  The package atom
-#
-define portage::mask ($context  = $title,
-                      $package  = '')
-{
-
-  file { "/etc/portage/package.mask/${context}":
-    content => "$package\n",
-    require => File['package.mask::directory'],
-    notify  => Exec['portage_changed_config'],
-    tag    => 'buildhost'
-  }
-
-}
-
-# Function portage::license
-#
-#  Specify license for a package.
-#
-#  @param context  A unique context for the package
-#  @param package  The package atom
-#  @param license The license to apply
-#
-define portage::license ($context  = $title,
-                         $package  = '',
-                         $license = '')
-{
-
-  file { "/etc/portage/package.accept_license/${context}":
-    content => "$package $license\n",
-    require => File['package.accept_license::directory'],
-    notify  => Exec['portage_changed_config'],
-    tag    => 'buildhost'
-  }
-
 }
