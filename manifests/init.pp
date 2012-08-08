@@ -45,31 +45,31 @@ class portage (
   
   $unstable_keyword = "~$::architecture"
 
-#   gentoo_use_flags { 'eselect':
+#   portage::use_flags { 'eselect':
 #     context => 'portage_common_eselect',
 #     package => 'app-admin/eselect',
 #     use     => 'doc bash-completion',
 #     tag     => 'buildhost'
 #   }
-#   gentoo_use_flags { 'portage':
+#   portage::use_flags { 'portage':
 #     context => 'portage_common_portage',
 #     package => 'sys-apps/portage',
 #     use     => 'doc',
 #     tag     => 'buildhost'
 #   }
-#   gentoo_keywords { 'esearch':
+#   portage::keywords { 'esearch':
 #     context => 'portage_esearch',
 #     package => 'app-portage/esearch',
 #     keywords => $unstable_keyword,
 #     tag     => 'buildhost'
 #   }
-  gentoo_keywords { 'portage':
+  portage::keywords { 'portage':
     context => 'portage',
     package => '=sys-apps/portage-2.2*',
     keywords => "**",
     tag     => 'buildhost'
   }
-  gentoo_unmask { 'portage':
+  portage::unmask { 'portage':
     context => 'portage',
     package => '=sys-apps/portage-2.2*',
     tag     => 'buildhost',
@@ -83,19 +83,19 @@ class portage (
 #   package {'esearch':
 #     category => 'app-portage',
 #     ensure   => 'installed',
-#     require  => Gentoo_keywords['esearch'],
+#     require  => Portage::Keywords['esearch'],
 #     tag      => 'buildhost',
 #   }
 #   package {'eselect':
 #     category => 'app-admin',
 #     ensure   => 'installed',
-#     require  => Gentoo_use_flags['eselect'],
+#     require  => Portage::Use_flags['eselect'],
 #     tag      => 'buildhost',
 #   }
   package { 'portage':
     category => 'sys-apps',
     ensure   => 'latest',
-    require  => [Gentoo_keywords['portage'], Gentoo_unmask['portage']],
+    require  => [Portage::Keywords['portage'], Portage::Unmask['portage']],
     tag      => 'buildhost',
   }
 
@@ -199,7 +199,7 @@ class portage (
   }
 }
 
-# Function gentoo_use_flags
+# Function portage::use_flags
 #
 #  Specify use flags for a package.
 #
@@ -207,9 +207,9 @@ class portage (
 #  @param package  The package atom
 #  @param use      The use flags to apply
 #
-define gentoo_use_flags ($context = $title,
-                         $package = '',
-                         $use = '')
+define portage::use_flags ($context = $title,
+                           $package = '',
+                           $use = '')
 {
 
   file { "/etc/portage/package.use/${context}":
@@ -224,7 +224,7 @@ define gentoo_use_flags ($context = $title,
 
 }
 
-# Function gentoo_keywords
+# Function portage::keywords
 #
 #  Specify keywords for a package.
 #
@@ -232,9 +232,9 @@ define gentoo_use_flags ($context = $title,
 #  @param package  The package atom
 #  @param keywords The keywords to apply
 #
-define gentoo_keywords ($context  = $title,
-                        $package  = '',
-                        $keywords = '')
+define portage::keywords ($context  = $title,
+                          $package  = '',
+                          $keywords = '')
 {
 
   file { "/etc/portage/package.accept_keywords/${context}":
@@ -246,15 +246,15 @@ define gentoo_keywords ($context  = $title,
 
 }
 
-# Function gentoo_unmask
+# Function portage::unmask
 #
 #  Unmask a package.
 #
 #  @param context  A unique context for the package
 #  @param package  The package atom
 #
-define gentoo_unmask ($context  = $title,
-                      $package  = '')
+define portage::unmask ($context  = $title,
+                        $package  = '')
 {
 
   file { "/etc/portage/package.unmask/${context}":
@@ -266,15 +266,15 @@ define gentoo_unmask ($context  = $title,
 
 }
 
-# Function gentoo_mask
+# Function portage::mask
 #
 #  Mask a package.
 #
 #  @param context  A unique context for the package
 #  @param package  The package atom
 #
-define gentoo_mask ($context  = $title,
-                    $package  = '')
+define portage::mask ($context  = $title,
+                      $package  = '')
 {
 
   file { "/etc/portage/package.mask/${context}":
@@ -286,7 +286,7 @@ define gentoo_mask ($context  = $title,
 
 }
 
-# Function gentoo_license
+# Function portage::license
 #
 #  Specify license for a package.
 #
@@ -294,9 +294,9 @@ define gentoo_mask ($context  = $title,
 #  @param package  The package atom
 #  @param license The license to apply
 #
-define gentoo_license ($context  = $title,
-                       $package  = '',
-                       $license = '')
+define portage::license ($context  = $title,
+                         $package  = '',
+                         $license = '')
 {
 
   file { "/etc/portage/package.accept_license/${context}":
