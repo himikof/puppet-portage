@@ -13,7 +13,7 @@ define portage::keywords ($context  = $title,
 
   file { "/etc/portage/package.accept_keywords/${context}":
     content => "$package $keywords\n",
-    require => Class['portage::config'],
+    require => File['/etc/portage/package.accept_keywords'],
     notify  => Class['portage::emerge'],
     tag    => 'buildhost'
   }

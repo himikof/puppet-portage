@@ -11,7 +11,7 @@ define portage::mask ($context  = $title,
 
   file { "/etc/portage/package.mask/${context}":
     content => "$package\n",
-    require => Class['portage::config'],
+    require => File['/etc/portage/package.mask'],
     notify  => Class['portage::emerge'],
     tag    => 'buildhost'
   }

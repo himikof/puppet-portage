@@ -13,7 +13,7 @@ define portage::license ($context  = $title,
 
   file { "/etc/portage/package.accept_license/${context}":
     content => "$package $license\n",
-    require => Class['portage::config'],
+    require => File['/etc/portage/package.license'],
     notify  => Class['portage::emerge'],
     tag    => 'buildhost'
   }

@@ -16,7 +16,7 @@ define portage::use_flags ($context = $title,
     owner   => 'root',
     group   => 'root',
     mode    => 644,
-    require => Class['portage::config'],
+    require => File['/etc/portage/package.use'],
     notify  => Class['portage::emerge'],
     tag     => 'buildhost'
   }

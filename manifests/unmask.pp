@@ -11,7 +11,7 @@ define portage::unmask ($context  = $title,
 
   file { "/etc/portage/package.unmask/${context}":
     content => "$package\n",
-    require => Class['portage::config'],
+    require => File['/etc/portage/package.unmask'],
     notify  => Class['portage::emerge'],
     tag    => 'buildhost'
   }
