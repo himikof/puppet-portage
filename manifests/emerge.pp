@@ -5,6 +5,7 @@ class portage::emerge {
     command     => "/usr/bin/emerge --changed-use --deep @world",
     refreshonly => "true",
     timeout     => 0,                   # Disable timeout completely
+    require     => Package['portage'],
   }
 
 }
