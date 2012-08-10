@@ -42,9 +42,9 @@ class portage (
   $gpg_key              = false,
 ) {
   
-  include portage::config::backup
+  #include portage::config::backup
   include portage::config
-  include portage::config::restore
+  #include portage::config::restore
   include portage::emerge
   
   $unstable_keyword = "~$::architecture"
