@@ -81,7 +81,7 @@ class portage (
   $unstable_keyword = "~$::architecture"
   
   package {['eix', 'eselect', 'euses', 'gentoolkit', 'gentoolkit-dev',
-            'mirrorselect', 'portage-utils']:
+            'mirrorselect', 'portage-utils', 'colordiff']:
     ensure   => 'installed',
     require  => Package['portage'],
     tag      => 'buildhost',
