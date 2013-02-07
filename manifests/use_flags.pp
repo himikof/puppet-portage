@@ -8,10 +8,12 @@
 #
 define portage::use_flags ($context = $title,
                            $package = '',
-                           $use = '')
+                           $use = '',
+                           $ensure = present)
 {
 
   file { "/etc/portage/package.use/${context}":
+    ensure  => $ensure,
     content => "$package $use",
     owner   => 'root',
     group   => 'root',

@@ -8,10 +8,12 @@
 #
 define portage::keywords ($context  = $title,
                           $package  = '',
-                          $keywords = '')
+                          $keywords = '',
+                          $ensure   = present)
 {
 
   file { "/etc/portage/package.accept_keywords/${context}":
+    ensure  => $ensure,
     content => "$package $keywords\n",
     require => File['/etc/portage/package.accept_keywords'],
     notify  => Class['portage::emerge'],

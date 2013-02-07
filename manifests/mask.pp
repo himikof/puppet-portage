@@ -6,10 +6,12 @@
 #  @param package  The package atom
 #
 define portage::mask ($context  = $title,
-                      $package  = '')
+                      $package  = '',
+                      $ensure   = present)
 {
 
   file { "/etc/portage/package.mask/${context}":
+    ensure  => $ensure,
     content => "$package\n",
     require => File['/etc/portage/package.mask'],
     notify  => Class['portage::emerge'],

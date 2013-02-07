@@ -8,10 +8,12 @@
 #
 define portage::license ($context  = $title,
                          $package  = '',
-                         $license = '')
+                         $license  = '',
+                         $ensure   = present)
 {
 
   file { "/etc/portage/package.accept_license/${context}":
+    ensure  => $ensure,
     content => "$package $license\n",
     require => File['/etc/portage/package.license'],
     notify  => Class['portage::emerge'],
