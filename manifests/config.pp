@@ -127,7 +127,7 @@ class portage::config (
 
     '/etc/portage/make.profile':
       ensure  => 'link',
-      target  => "..$profile",
+      target  => "../..$profile",
       before  => Package['portage'],
       notify  => Exec['portage_changed_config'];
     
