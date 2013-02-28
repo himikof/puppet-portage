@@ -11,7 +11,7 @@ import 'stdlib'
 #
 class portage (
   $profile              = 
-    "/usr/portage/profiles/default/linux/$::architecture/10.0",
+    "/usr/portage/profiles/default/linux/$::architecture/13.0",
   $use                  = false,
   $chost                = false,
   $cflags               = false,

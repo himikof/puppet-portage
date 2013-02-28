@@ -123,6 +123,9 @@ class portage::config (
   # Portage configuration
   file {
     '/etc/make.profile':
+      ensure  => 'absent';
+
+    '/etc/portage/make.profile':
       ensure  => 'link',
       target  => "..$profile",
       before  => Package['portage'],
